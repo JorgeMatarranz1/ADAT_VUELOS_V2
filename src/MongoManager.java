@@ -37,4 +37,22 @@ public class MongoManager implements Funcionalidad {
 		return vuelos;
 	}
 
+	@Override
+	public void insertar(Vendidos venta) {
+		
+		
+	}
+
+	@Override
+	public void modificar(String codigo_vuelo, int dni, String codigo_venta, Vendidos venta) {
+		
+		
+	}
+
+	@Override
+	public void cancelar(String codigo_vuelo, int dni, String codigo_venta) {
+		
+		
+	}
+
 }
