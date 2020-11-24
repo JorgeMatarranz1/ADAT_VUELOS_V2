@@ -9,17 +9,17 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoManager implements Funcionalidad {
 	MongoDatabase db;
-
+	MongoCollection<Document> collection;
 	public MongoManager() {
-		MongoClient mongo = null;
-		mongo = new MongoClient("localhost", 27017);
+		 MongoClient mongo = new MongoClient("localhost", 27017);
 		db = mongo.getDatabase("adat_vuelos");
+		collection = db.getCollection("vuelosV2");
 	}
 
 	@Override
 	public HashMap<String, Vuelo> mostrar() {
 		HashMap<String, Vuelo> vuelos = new HashMap<String, Vuelo>();
-		MongoCollection<Document> collection = db.getCollection("vuelosV2");
+		
 		MongoCursor<Document> cursor = collection.find().iterator();
 
 		while (cursor.hasNext()) {
@@ -36,22 +36,24 @@ public class MongoManager implements Funcionalidad {
 		}
 		return vuelos;
 	}
-
+	
+	
+	//venta son los nuevos datos
 	@Override
-	public void insertar(Vendidos venta) {
+	public void modificar(String codigo_vuelo, Vendidos venta, Vendidos datos) {
 		
 		
 	}
 
 	@Override
-	public void modificar(String codigo_vuelo, int dni, String codigo_venta, Vendidos venta) {
+	public void cancelar(String codigo_vuelo, Vendidos ven) {
 		
 		
 	}
 
 	@Override
-	public void cancelar(String codigo_vuelo, int dni, String codigo_venta) {
-		
+	public void insertar(Vendidos venta, String cod_venta) {
+		venta.setCodigoVenta(cod_venta);
 		
 	}
 
