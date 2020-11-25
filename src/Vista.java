@@ -1,12 +1,10 @@
 import java.util.HashMap;
-<<<<<<< HEAD
-=======
 import java.util.Random;
->>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 import java.util.Scanner;
 
 public class Vista {
 	Scanner sc = new Scanner(System.in);
+	Scanner in = new Scanner(System.in);
 	Utils ut = new Utils();
 
 	public void menu() {
@@ -44,6 +42,7 @@ public class Vista {
 		Vendidos ven = new Vendidos();
 		System.out.print("Introduce DNI: ");
 		String dni = sc.next();
+		System.out.print("Introduce codigo de venta: ");
 		String codigo_venta= sc.next();
 		ven.setDni(dni);
 		ven.setCodigoVenta(codigo_venta);
@@ -61,8 +60,9 @@ public class Vista {
 		System.out.print("Introduce DNI del pagador: ");
 		String dni = sc.next();
 		System.out.print("Introduce tarjeta: ");
-		String tarjeta = sc.nextLine();
+		String tarjeta = in.nextLine();
 		
+		ven.setAsiento(ut.numeroAsiento());
 		ven.setDni(dni_pasajero);
 		ven.setNombre(nombre);
 		ven.setApellido(apellido);
