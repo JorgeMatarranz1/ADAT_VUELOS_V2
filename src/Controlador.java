@@ -1,4 +1,3 @@
-import java.util.Scanner;
 
 public class Controlador {
 	public void ejecutar() {
@@ -11,6 +10,10 @@ public class Controlador {
 			vista.verVuelos(mongo.mostrar());
 			
 			mongo.insertar(vista.pedirDatos(), vista.pedirCodigoVuelo());
+<<<<<<< HEAD
+=======
+			vista.pedirDatos();
+>>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 			break;
 		case 2:
 			mongo.cancelar(vista.pedirCodigoVuelo(), vista.pedirDatos2());

@@ -21,6 +21,7 @@ public class Vendidos {
 		this.dniPagador = dniPagador;
 		this.tarjeta = tarjeta;
 		this.codigoVenta = codigoVenta;
+
 	}
 
 	public int getAsiento() {

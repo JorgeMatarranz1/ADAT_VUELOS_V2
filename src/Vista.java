@@ -1,4 +1,8 @@
 import java.util.HashMap;
+<<<<<<< HEAD
+=======
+import java.util.Random;
+>>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 import java.util.Scanner;
 
 public class Vista {
