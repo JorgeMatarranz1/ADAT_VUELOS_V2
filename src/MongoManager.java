@@ -74,7 +74,7 @@ public class MongoManager implements Funcionalidad {
 						.append("apellido", venta.getApellido()).append("nombre", venta.getNombre())
 						.append("dniPagador", venta.getDniPagador()).append("tarjeta", venta.getTarjeta())
 						.append("codigoVenta", venta.getCodigoVenta()))
-				.append("$inc",  new BasicDBObject("plazas_disponibles", -1));
+				.append("$inc", new BasicDBObject("plazas_disponibles", -1));
 		Document updateQuery = new Document("$push", listItem);
 
 		collection.updateOne(quienCambio, updateQuery);
@@ -83,27 +83,32 @@ public class MongoManager implements Funcionalidad {
 	@Override
 	public void modificar(String codigo_vuelo, Vendidos venta, Vendidos datos) {
 		Document quienCambio = new Document("codigo", codigo_vuelo)
-				.append("vendidos.codigoVenta", datos.getCodigoVenta())
-				.append("vendidos.dni", datos.getDni());
+				.append("vendidos.codigoVenta", venta.getCodigoVenta()).append("vendidos.dni", venta.getDni());
 		System.out.println(quienCambio);
-		Document listItem = new Document("vendidos",
-				new BasicDBObject("dni", venta.getDni())
-						.append("apellido", venta.getApellido()).append("nombre", venta.getNombre())
-						.append("dniPagador", venta.getDniPagador()).append("tarjeta", venta.getTarjeta())
-						.append("codigoVenta", venta.getCodigoVenta()));
-		
+		Document listItem = new Document("vendidos.$.dni", datos.getDni())
+				.append("vendidos.$.apellido", datos.getApellido()).append("vendidos.$.nombre", datos.getNombre())
+				.append("vendidos.$.dniPagador", datos.getDniPagador()).append("vendidos.$.tarjeta", datos.getTarjeta())
+				.append("vendidos.$.codigoVenta", datos.getCodigoVenta());
+		System.out.println(listItem);
 		Document updateQuery = new Document("$set", listItem);
-		
+
 		System.out.println(collection.updateMany(quienCambio, updateQuery));
 	}
 
 	@Override
 	public void cancelar(String codigo_vuelo, Vendidos ven) {
-		Document doc = new Document("codigo", codigo_vuelo)
-				.append("vendidos.codigoVenta", ven.getCodigoVenta())
-				.append("vendidos.dni", ven.getDni());
+//		Document doc = new Document("codigo", codigo_vuelo)
+//				.append("vendidos.codigoVenta", ven.getCodigoVenta())
+//				.append("vendidos.dni", ven.getDni());
+//
+//		collection.deleteMany(doc);
+		Document query = new Document("codigo", codigo_vuelo);
 
-		collection.deleteMany(doc);
+		Document update = new Document("$pull", new Document("vendidos.$.dni", ven.getDni())
+				.append("vendidos.$.codigoVenta", ven.getCodigoVenta())
+				.append("$inc", new BasicDBObject("plazas_disponibles", -1)));
+
+		collection.updateOne(query, update);
 	}
 
 }
