@@ -12,33 +12,20 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 public class MongoManager implements Funcionalidad {
-<<<<<<< HEAD
 	private MongoClient mongo;
 	private MongoDatabase db;
 	private MongoCollection collection;
 	Utils ut;
 
 	public MongoManager() {
-		mongo = new MongoClient("localhost", 27017);
-		db = mongo.getDatabase("vuelos2_0");
-		collection = db.getCollection("vuelos");
-=======
-	MongoDatabase db;
-	MongoCollection<Document> collection;
-	public MongoManager() {
 		 MongoClient mongo = new MongoClient("localhost", 27017);
 		db = mongo.getDatabase("adat_vuelos");
 		collection = db.getCollection("vuelosV2");
->>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 	}
 
 	@Override
 	public HashMap<String, Vuelo> mostrar() {
 		HashMap<String, Vuelo> vuelos = new HashMap<String, Vuelo>();
-<<<<<<< HEAD
-=======
-		
->>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 		MongoCursor<Document> cursor = collection.find().iterator();
 
 		while (cursor.hasNext()) {
@@ -59,7 +46,6 @@ public class MongoManager implements Funcionalidad {
 	
 	//venta son los nuevos datos
 	@Override
-<<<<<<< HEAD
 	public void insertar(Vendidos venta, String cod_vuelo) {
 		int asiento = 0;
 		FindIterable fi = collection.find();
@@ -90,24 +76,7 @@ public class MongoManager implements Funcionalidad {
 
 	@Override
 	public void cancelar(String codigo_vuelo, Vendidos ven) {
-
-=======
-	public void modificar(String codigo_vuelo, Vendidos venta, Vendidos datos) {
 		
-		
-	}
-
-	@Override
-	public void cancelar(String codigo_vuelo, Vendidos ven) {
-		
-		
-	}
-
-	@Override
-	public void insertar(Vendidos venta, String cod_venta) {
-		venta.setCodigoVenta(cod_venta);
-		
->>>>>>> 31807605ae95cc078e246f8a34bf78ab888d5576
 	}
 
 }
