@@ -12,12 +12,14 @@ import org.bson.Document;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
 
 public class MongoManager implements Funcionalidad {
 	private MongoClient mongo;
@@ -56,26 +58,29 @@ public class MongoManager implements Funcionalidad {
 	public void insertar(Vendidos venta, String cod_vuelo) {
 		Document quienCambio = new Document("codigo", cod_vuelo);
 		int asiento = 0;
-		FindIterable fi = collection.find(quienCambio);
-		MongoCursor cur = fi.cursor();
-		while (cur.hasNext()) {
-			Document doc = (Document) cur.next();
-			System.out.println(doc);
-			ArrayList asientos = (ArrayList) doc.getList("vendidos.asiento", Document.class);
-			asiento = doc.getInteger("vendidos.asiento");
+		Document nodes = (Document) collection.find(quienCambio)
+				.projection(Projections.fields(Projections.include("vendidos.asiento"), Projections.excludeId()))
+				.first();
+
+		List<Document> list = (List<Document>) nodes.get("vendidos");
+		for (Document d : list) {
+			asiento = (int) d.get("asiento");
 			System.out.println(asiento);
 			if (asiento == venta.getAsiento()) {
 				asiento = ut.numeroAsiento();
+			}else {
+				asiento = venta.getAsiento();
 			}
-
 		}
+
 		Document listItem = new Document("vendidos",
 				new BasicDBObject("asiento", asiento).append("dni", venta.getDni())
 						.append("apellido", venta.getApellido()).append("nombre", venta.getNombre())
 						.append("dniPagador", venta.getDniPagador()).append("tarjeta", venta.getTarjeta())
-						.append("codigoVenta", venta.getCodigoVenta())).append("$inc",
-								new BasicDBObject("plazas_disponibles", -1));
-		Document updateQuery = new Document("$push", listItem);
+						.append("codigoVenta", venta.getCodigoVenta()));
+
+		Document updateQuery = new Document("$push", listItem).append("$inc",
+				new BasicDBObject("plazas_disponibles", -1));
 
 		collection.updateOne(quienCambio, updateQuery);
 	}
@@ -89,24 +94,18 @@ public class MongoManager implements Funcionalidad {
 				.append("vendidos.$.apellido", datos.getApellido()).append("vendidos.$.nombre", datos.getNombre())
 				.append("vendidos.$.dniPagador", datos.getDniPagador()).append("vendidos.$.tarjeta", datos.getTarjeta())
 				.append("vendidos.$.codigoVenta", datos.getCodigoVenta());
-		System.out.println(listItem);
 		Document updateQuery = new Document("$set", listItem);
 
-		System.out.println(collection.updateMany(quienCambio, updateQuery));
+		collection.updateMany(quienCambio, updateQuery);
 	}
 
 	@Override
 	public void cancelar(String codigo_vuelo, Vendidos ven) {
-//		Document doc = new Document("codigo", codigo_vuelo)
-//				.append("vendidos.codigoVenta", ven.getCodigoVenta())
-//				.append("vendidos.dni", ven.getDni());
-//
-//		collection.deleteMany(doc);
 		BasicDBObject query = new BasicDBObject("codigo", codigo_vuelo);
 		BasicDBObject fields = new BasicDBObject("vendidos",
 				new BasicDBObject("dni", ven.getDni()).append("codigoVenta", ven.getCodigoVenta()));
-		BasicDBObject update = new BasicDBObject("$pull", fields)
-				.append("$inc",new BasicDBObject("plazas_disponibles", 1));
+		BasicDBObject update = new BasicDBObject("$pull", fields).append("$inc",
+				new BasicDBObject("plazas_disponibles", 1));
 
 		collection.updateOne(query, update);
 
