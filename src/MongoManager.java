@@ -18,6 +18,7 @@ public class MongoManager implements Funcionalidad {
 		mongo = new MongoClient("localhost", 27017);
 		db = mongo.getDatabase("vuelos2_0");
 		collection = db.getCollection("vuelos");
+
 	}
 
 	@Override
@@ -49,19 +50,18 @@ public class MongoManager implements Funcionalidad {
 				.projection(Projections.fields(Projections.include("vendidos.asiento"), Projections.excludeId()))
 				.first();
 		List<Document> list = (List<Document>) nodes.get("vendidos");
-		if(list == null) {
+		if (list == null) {
 			asiento = venta.getAsiento();
-		}else {
+		} else {
 			for (Document d : list) {
 				asiento = (int) d.get("asiento");
 				if (asiento == venta.getAsiento()) {
 					asiento = ut.numeroAsiento();
-				}else {
+				} else {
 					asiento = venta.getAsiento();
 				}
 			}
 		}
-		
 
 		Document listItem = new Document("vendidos",
 				new BasicDBObject("asiento", asiento).append("dni", venta.getDni())
@@ -73,6 +73,7 @@ public class MongoManager implements Funcionalidad {
 				new BasicDBObject("plazas_disponibles", -1));
 
 		collection.updateOne(quienCambio, updateQuery);
+		System.out.println("Su codigo de compra es: " + venta.getCodigoVenta());
 	}
 
 	@Override
