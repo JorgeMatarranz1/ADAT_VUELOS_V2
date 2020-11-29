@@ -61,17 +61,21 @@ public class MongoManager implements Funcionalidad {
 		Document nodes = (Document) collection.find(quienCambio)
 				.projection(Projections.fields(Projections.include("vendidos.asiento"), Projections.excludeId()))
 				.first();
-
 		List<Document> list = (List<Document>) nodes.get("vendidos");
-		for (Document d : list) {
-			asiento = (int) d.get("asiento");
-			System.out.println(asiento);
-			if (asiento == venta.getAsiento()) {
-				asiento = ut.numeroAsiento();
-			}else {
-				asiento = venta.getAsiento();
+		if(list == null) {
+			asiento = venta.getAsiento();
+		}else {
+			for (Document d : list) {
+				asiento = (int) d.get("asiento");
+				System.out.println(asiento);
+				if (asiento == venta.getAsiento()) {
+					asiento = ut.numeroAsiento();
+				}else {
+					asiento = venta.getAsiento();
+				}
 			}
 		}
+		
 
 		Document listItem = new Document("vendidos",
 				new BasicDBObject("asiento", asiento).append("dni", venta.getDni())
@@ -89,7 +93,6 @@ public class MongoManager implements Funcionalidad {
 	public void modificar(String codigo_vuelo, Vendidos venta, Vendidos datos) {
 		Document quienCambio = new Document("codigo", codigo_vuelo)
 				.append("vendidos.codigoVenta", venta.getCodigoVenta()).append("vendidos.dni", venta.getDni());
-		System.out.println(quienCambio);
 		Document listItem = new Document("vendidos.$.dni", datos.getDni())
 				.append("vendidos.$.apellido", datos.getApellido()).append("vendidos.$.nombre", datos.getNombre())
 				.append("vendidos.$.dniPagador", datos.getDniPagador()).append("vendidos.$.tarjeta", datos.getTarjeta())
