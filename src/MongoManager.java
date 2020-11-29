@@ -73,8 +73,8 @@ public class MongoManager implements Funcionalidad {
 				new BasicDBObject("asiento", asiento).append("dni", venta.getDni())
 						.append("apellido", venta.getApellido()).append("nombre", venta.getNombre())
 						.append("dniPagador", venta.getDniPagador()).append("tarjeta", venta.getTarjeta())
-						.append("codigoVenta", venta.getCodigoVenta()))
-				.append("$inc", new BasicDBObject("plazas_disponibles", -1));
+						.append("codigoVenta", venta.getCodigoVenta())).append("$inc",
+								new BasicDBObject("plazas_disponibles", -1));
 		Document updateQuery = new Document("$push", listItem);
 
 		collection.updateOne(quienCambio, updateQuery);
@@ -102,13 +102,14 @@ public class MongoManager implements Funcionalidad {
 //				.append("vendidos.dni", ven.getDni());
 //
 //		collection.deleteMany(doc);
-		Document query = new Document("codigo", codigo_vuelo);
-
-		Document update = new Document("$pull", new Document("vendidos.$.dni", ven.getDni())
-				.append("vendidos.$.codigoVenta", ven.getCodigoVenta())
-				.append("$inc", new BasicDBObject("plazas_disponibles", -1)));
+		BasicDBObject query = new BasicDBObject("codigo", codigo_vuelo);
+		BasicDBObject fields = new BasicDBObject("vendidos",
+				new BasicDBObject("dni", ven.getDni()).append("codigoVenta", ven.getCodigoVenta()));
+		BasicDBObject update = new BasicDBObject("$pull", fields)
+				.append("$inc",new BasicDBObject("plazas_disponibles", 1));
 
 		collection.updateOne(query, update);
+
 	}
 
 }
